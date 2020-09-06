@@ -4,29 +4,20 @@
 -- See README.txt for licensing and release notes.
 -- Copyright (c) 2020, Leslie E. Krause
 --
--- ./games/minetest_game/mods/timekeeper/init.lua
+-- ./games/just_test_tribute/mods/timekeeper/init.lua
 --------------------------------------------------------
 
 function Timekeeper( this )
 	local timer_defs = { }
 	local pending_timer_defs = { }
 	local clock = 0.0
-	local delay = 0.0
 	local self = { }
 
-	self.shift = function ( dtime )
-		delay = delay + dtime
-	end
-
-	self.unshift = function ( )
-		delay = 0.0
-	end
-
-	self.start = function ( period, name, func )
+	self.start = function ( period, name, func, delay )
 		if timer_defs[ name ] then
 			timer_defs[ name ] = nil
 		end
-		pending_timer_defs[ name ] = { cycles = 0, period = period, expiry = clock + delay + period, started = clock, func = func }
+		pending_timer_defs[ name ] = { cycles = 0, period = period, expiry = clock + period + ( delay or 0.0 ), started = clock, func = func }
 	end
 
 	self.start_now = function ( period, name, func )
@@ -46,7 +37,6 @@ function Timekeeper( this )
 	end
 
 	self.on_step = function ( dtime )
---		S1()		
 		clock = clock + dtime
 
 		for k, v in pairs( pending_timer_defs ) do
@@ -66,9 +56,15 @@ function Timekeeper( this )
 				timers[ k ] = v
 			end
 		end
---		S1_()		
+
 		return timers
 	end
 
 	return self
 end
+
+globaltimer = Timekeeper( { } )
+
+minetest.register_globalstep( function ( dtime )
+	globaltimer.on_step( dtime )
+end )

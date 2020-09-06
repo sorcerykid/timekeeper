@@ -1,4 +1,4 @@
-Timekeeper Mod v1.0
+Timekeeper Mod v1.1
 By Leslie E. Krause
 
 Timekeeper acts as a centralized dispatcher for all time-sensitive routines, thereby 
