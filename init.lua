@@ -18,7 +18,7 @@ globaltimer.start = function ( period, name, func, delay )
 	table.insert( g_timer_list, {
 		cycles = 0,
 		period = period,
-		expiry = g_clock + period + ( delay or 0.0 ),
+		expiry = g_clock + ( delay or 0.0 ),
 		func = func,
 	} )
 end
@@ -27,7 +27,7 @@ minetest.register_globalstep( function ( dtime )
 	g_clock = g_clock + dtime
 
 	for i, v in ipairs( g_timer_list ) do
-		if g_clock >= v.expiry or g_clock == 0.0 then
+		if g_clock >= v.expiry then
 			v.expiry = g_clock + v.period
 			-- callback( cycles, period, uptime, overrun )
 			v.func( v.cycles, v.period, g_clock, g_clock - v.expiry )
